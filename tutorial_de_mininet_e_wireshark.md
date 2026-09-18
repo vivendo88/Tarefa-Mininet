@@ -15,7 +15,7 @@ sudo -E wireshark &
 
 > **Nota:** O parâmetro `-E` preserva o ambiente do utilizador (incluindo variáveis `$DISPLAY` do servidor X), e o `&` libera o prompt do terminal para continuar comandos.
 
-![Iniciando Wireshark](1%20Iniciando%20wireshark.png)
+
 
 ---
 
@@ -30,7 +30,7 @@ mn
 <img width="798" height="578" alt="2 Iniciando_mininet" src="https://github.com/user-attachments/assets/9fa296ea-719c-4acf-b52c-9bef9d722bd4" />
 
 
-![Iniciando Mininet](2%20Iniciando_mininet.png)
+
 
 ---
 
@@ -45,7 +45,6 @@ mininet> nodes
 <img width="798" height="578" alt="3 Exibindo os Nodes criados" src="https://github.com/user-attachments/assets/1d3bc798-615e-427c-a511-9dc4f2d4f86b" />
 
 
-![Exibindo os Nodes criados](3%20Exibindo%20os%20Nodes%20criados.png)
 
 *Saída esperada:*
 ```text
@@ -66,7 +65,6 @@ mininet> net
 <img width="798" height="302" alt="4 Exibindo os como esta configuranção da rede" src="https://github.com/user-attachments/assets/897f6472-db82-4c5c-a6d3-2c86d33774b0" />
 
 
-![Exibindo a configuração da rede](4%20Exibindo%20os%20como%20esta%20configuran%C3%A7%C3%A3o%20da%20rede.png)
 
 *Mapeamento das portas:*
 * `h1`: interface `h1-eth0` conectada em `s1-eth1`
@@ -109,7 +107,7 @@ mininet> h1 ps -a
 ```
 
 <img width="598" height="228" alt="7 exibindo processos rodando no host1" src="https://github.com/user-attachments/assets/920c186a-a17a-421a-ab55-3262017f5317" />
-![Exibindo processos rodando no host1](7%20exibindo%20processos%20rodando%20no%20host1.png)
+
 
 ---
 
@@ -122,7 +120,7 @@ mininet> h1 ping -c 1 h2
 ```
 
 <img width="1554" height="517" alt="8 Ping do host 1 para host2" src="https://github.com/user-attachments/assets/3654c655-15d0-4bbb-80d1-a9597eebf45e" />
-![Ping do host 1 para host2](8%20Ping%20do%20host%201%20para%20host2.png)
+
 
 ### O que observar no Wireshark:
 1. **Requisição e resposta ARP:** Resolução de endereço físico `MAC` para o IP `10.0.0.2`.
@@ -140,7 +138,6 @@ mininet> h1 python -m http.server 80 &
 mininet> h2 wget -O - h1
 ```
 <img width="1916" height="897" alt="9 iniciando serviço http no host1 e acessando do host2" src="https://github.com/user-attachments/assets/7d9d0e4a-1c03-4112-a7f1-75da8387fd95" />
-![Iniciando serviço HTTP no host1 e acessando do host2](9%20iniciando%20servi%C3%A7o%20http%20no%20host1%20e%20acessando%20do%20host2.jpg)
 
 ### O que observar no Wireshark:
 * Handshake de 3 vias do TCP (`[SYN]`, `[SYN, ACK]`, `[ACK]`).
@@ -157,7 +154,7 @@ Para derrubar a topologia virtual e liberar os recursos do sistema:
 mininet> exit
 ```
 <img width="1916" height="897" alt="10 Saindo da execução do mininet" src="https://github.com/user-attachments/assets/84d791bf-5dc7-4d61-8893-c70bd90adca8" />
-![Saindo da execução do Mininet](10%20Saindo%20da%20execu%C3%A7%C3%A3o%20do%20mininet.jpg)
+
 
 > **Comportamento esperado no Wireshark:** Quando o Mininet encerra, a interface virtual de rede (`s1-eth1`) é removida da pilha de rede do Linux. O Wireshark exibirá a mensagem de aviso informando que o adaptador de rede parou de funcionar e encerrou a captura.
 
@@ -168,8 +165,9 @@ O Mininet permite subir a topologia, validar a comunicação entre o par de host
 ```bash
 mn --test pingpair
 ```
+<img width="961" height="565" alt="11 Comando de teste ping dinamico" src="https://github.com/user-attachments/assets/841104da-8113-49e6-93f4-31476b37e1fa" />
 
-![11 Comando de teste ping dinamico](11%20Comando%20de%20teste%20ping%20dinamico.png)
+
 
 *O Mininet executa o teste ping entre `h1` e `h2`, relata o percentual de pacotes recebidos (`0% dropped`) e desmonta a rede.*
 
@@ -182,8 +180,8 @@ Avalie a capacidade de transferência TCP do ambiente padrão de switches emulad
 ```bash
 sudo mn --test iperf
 ```
+<img width="764" height="565" alt="12 comando para gerar trafego na rede" src="https://github.com/user-attachments/assets/b2af162e-0cc5-4a8e-824e-1f2917cce1d4" />
 
-![12 comando para gerar trafego na rede](12%20comando%20para%20gerar%20trafego%20na%20rede.png)
 
 *O teste reporta taxas elevadas (acima de 50 Gbits/sec), demonstrando a ausência de gargalos ou limitações de banda simuladas nos links padrão.*
 
@@ -197,6 +195,9 @@ sudo mn --test iperf
 sudo mn --link tc,bw=10,delay=10ms
 ```
 
+<img width="923" height="612" alt="13 simulando trafego no ambiente e delay" src="https://github.com/user-attachments/assets/dcb94199-6795-49d9-8c40-07b34bd7cc45" />
+
+
 Dentro do prompt do Mininet, teste a banda e a latência de ida e volta:
 
 ```bash
@@ -204,7 +205,7 @@ mininet> iperf
 mininet> h1 ping -c10 h2
 ```
 
-![13 simulando trafego no ambiente e delay](13%20simulando%20trafego%20no%20ambiente%20e%20delay.png)
+
 
 * **Iperf:** Taxa limitada em aproximadamente **9.50 a 11.8 Mbits/sec** (próximo ao teto configurado de 10 Mbps).
 * **Ping:** Latência média de ida e volta de cerca de **40 ms** (10 ms por trecho de link: $h1 \leftrightarrow s1$ e $s1 \leftrightarrow h2$, totalizando 20 ms de ida e 20 ms de volta).
@@ -219,7 +220,8 @@ Para auditar cada chamada interna de sistema, comandos de configuração de IP, 
 mn -v debug
 ```
 
-![14 comando para trazer logs de iniciação do codigo](14%20comando%20para%20trazer%20logs%20de%20inicia%C3%A7%C3%A3o%20do%20codigo.png)
+<img width="1307" height="878" alt="14 comando para trazer logs de iniciação do codigo" src="https://github.com/user-attachments/assets/7c670106-8c13-413c-8c41-259780da6f0e" />
+
 
 *Exibe chamadas como `ip link add`, `ovs-vsctl`, migração de interfaces virtuais para namespaces dos hosts e comunicação do controlador OpenFlow.*
 
@@ -233,7 +235,9 @@ Inicie uma topologia escrita em arquivo Python externo (`--custom`) contendo mú
 mn --custom ~/mininet/custom/topo-2sw-2host.py --topo mytopo --test pingall
 ```
 
-![15 Comando que roda uma topologia personaliza](15%20Comando%20que%20roda%20uma%20topologia%20personaliza.png)
+<img width="886" height="612" alt="15 Comando que roda uma topologia personaliza" src="https://github.com/user-attachments/assets/e51fe2ee-357d-4158-ab11-1747f23079ae" />
+
+
 
 *A topologia `mytopo` conecta `h1` ao switch `s3`, `h2` ao switch `s4`, e interliga `s3` a `s4`. O teste `pingall` confirma que todos os hosts conseguem se comunicar através dos switches intermediários.*
 
@@ -248,7 +252,9 @@ mn
 mininet> h1 ifconfig
 ```
 
-![16 comparando mn ifconfig](16%20comparando%20mn%20ifconfig.png)
+<img width="650" height="612" alt="16 comparando mn ifconfig" src="https://github.com/user-attachments/assets/53f2cc34-cd83-4321-b368-191fd5978f24" />
+
+
 *O endereço MAC do `h1-eth0` é gerado aleatoriamente (ex: `6a:92:23:14:d7:e4`).*
 
 ---
@@ -261,8 +267,8 @@ Ao adicionar o parâmetro `--mac`, o Mininet atribui endereços físicos previs�
 mn --mac
 mininet> h1 ifconfig
 ```
+<img width="597" height="667" alt="17 comparando mn --mac ifconfig" src="https://github.com/user-attachments/assets/f9f54c71-67de-4629-a9d3-9e7d7abd4f31" />
 
-![17 comparando mn --mac ifconfig](17%20comparando%20mn%20--mac%20ifconfig.png)
 *O MAC do host 1 passa a ser fixado como `00:00:00:00:00:01`, facilitando inspeção e filtros em capturas de pacotes no Wireshark.*
 
 ---
@@ -275,7 +281,8 @@ Para depurar e executar comandos simultaneamente em cada elemento da topologia a
 sudo -E mn -x
 ```
 
-![17 rodando o mininet a abrindo as janelas de cada node](17%20rodando%20o%20mininet%20a%20abrindo%20as%20janelas%20de%20cada%20node.png)
+<img width="1752" height="717" alt="17 rodando o mininet a abrindo as janelas de cada node" src="https://github.com/user-attachments/assets/1ddc928a-20cf-40e3-a379-5af677adb718" />
+
 
 *Janelas independentes são iniciadas para o controlador `c0`, o switch `s1`, e os hosts `h1` e `h2`.*
 
@@ -290,7 +297,7 @@ A partir da janela individual do nó `h1`, inicie um envio contínuo de pings pa
 ping 10.0.0.2
 ```
 
-![18 realizando Ping entres os Hosts](18%20realizando%20Ping%20entres%20os%20Hosts.jpg)
+<img width="1901" height="813" alt="18 realizando Ping entres os Hosts" src="https://github.com/user-attachments/assets/ba747d10-0616-4d60-b09a-2ea2c9bd6832" />
 
 *O tráfego de pacotes ICMP em tempo real pode ser inspecionado na interface virtual `s1-eth2` pelo Wireshark.*
 
@@ -312,4 +319,56 @@ sudo mn --switch ovsk --test iperf
 ```
 *Resultados na ordem de **~60.1 Gbits/sec**, aproveitando o chaveamento nativo e aceleração dentro do kernel Linux.*
 
-![19 Comparando test de iperf](19%20Comparando%20test%20de%20iperf.png)
+<img width="1901" height="996" alt="19 Comparando test de iperf" src="https://github.com/user-attachments/assets/99c8a419-ebcd-470c-871b-7f9faea441c5" />
+
+## 21. Benchmark de Tempo de Criação e Destruição da Rede
+
+Para medir a latência de inicialização e o tempo que o Mininet leva para subir e desmanchar o ambiente sem rodar testes de rede adicionais, utilize o teste `none`:
+
+```bash
+sudo mn --test none
+```
+<img width="372" height="515" alt="20 comando que tempo de execução da rede" src="https://github.com/user-attachments/assets/a7852c0f-47a8-4ab0-bc2b-da67fc2ed00b" />
+
+*A topologia completa é instanciada e destruída em apenas **0.165 segundos**, evidenciando a leveza dos contêineres e namespaces do Mininet.*
+
+---
+
+## 22. Isolamento Completo com Network Namespaces Próprios (`--innamespace`)
+
+Por padrão, os switches executam no namespace de rede global da máquina host. Com a flag `--innamespace`, o switch em espaço de usuário e a rede de controle passam a rodar em seus próprios namespaces isolados:
+
+```bash
+sudo mn --innamespace --switch user
+```
+
+Dentro da CLI do Mininet, realize testes de conectividade:
+
+```bash
+mininet> h1 ping h2
+```
+
+<img width="493" height="359" alt="21 comando como namespace" src="https://github.com/user-attachments/assets/a92c1041-0edb-4520-a3d9-9925acbf7ac1" />
+
+
+![Comando como namespace](21%20comando%20como%20namespace.png)
+
+*O Mininet testa e valida previamente o canal de controle entre `s1` e `c0` com 0% de perda (`2/2 received`) antes de abrir a linha de comando.*
+
+---
+
+## 23. Abertura Interativa de Terminais XTerm para Hosts Específicos
+
+Em vez de abrir terminais para todos os nós de uma vez só (como ocorre no parâmetro `-x`), você pode chamar janelas interativas sob demanda dentro do próprio prompt do Mininet apenas para os nós necessários:
+
+```bash
+mininet> xterm h1 h2
+```
+
+
+<img width="942" height="306" alt="23 comando paara abrir terminal dos hosts(1)" src="https://github.com/user-attachments/assets/89788ead-d343-4f7c-84ca-8b76290bc075" />
+
+
+*Duas janelas de terminal dedicadas são abertas (`Node: h1` e `Node: h2`), prontas para a execução de serviços, scripts ou ferramentas como tcpdump e htop.*
+
+
