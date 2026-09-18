@@ -371,4 +371,75 @@ mininet> xterm h1 h2
 
 *Duas janelas de terminal dedicadas são abertas (`Node: h1` e `Node: h2`), prontas para a execução de serviços, scripts ou ferramentas como tcpdump e htop.*
 
+### 24. Executar o Controlador POX com Aprendizagem L2
+
+Inicie o controlador POX executando o componente de aprendizagem de encaminhamento de nível 2 (`forwarding.l2_learning`):
+
+```bash
+cd pox/
+./pox.py forwarding.l2_learning
+```
+
+<img width="796" height="563" alt="24 comando excutar arquivo pox py" src="https://github.com/user-attachments/assets/0ff25c07-173a-4e98-8cd7-34fcbc9fd2ae" />
+
+*O controlador POX inicializa o suporte OpenFlow 0.1 e escuta conexões de switches na porta padrão 6633.*
+
+---
+
+### 25. Conectar o Mininet ao POX e Capturar Pacotes OpenFlow
+
+Num segundo terminal, inicie a rede apontando para o controlador remoto local (`127.0.0.1:6633`) e execute o ping entre os hosts:
+
+```bash
+sudo mn --controller=remote,ip=127.0.0.1,port=6633
+```
+
+No Mininet:
+
+```bash
+mininet> h1 ping h2
+```
+*<img width="1641" height="989" alt="25 comando excutar arquivo pox py" src="https://github.com/user-attachments/assets/e86206eb-2171-4fc1-8211-5f8de8dda22c" />
+
+![Comando executar arquivo pox.py com ping e wireshark](25%20comando%20excutar%20arquivo%20pox.py.png)
+
+*O switch estabelece sessão com o POX, que instala os fluxos de comutação conforme pacotes ARP e ICMP são inspecionados em tempo real pelo Wireshark.*
+
+---
+
+### 26. Inicializar o Mininet com Referência ao Ryu
+
+O Mininet suporta a inicialização direta referenciando o controlador Ryu:
+
+```bash
+sudo mn --controller ryu
+```
+
+<img width="809" height="575" alt="26 comando excutar controlador ryu" src="https://github.com/user-attachments/assets/90da822f-bd0e-47f5-8a31-59fc28bcdea6" />
+
+*A infraestrutura é carregada associando o switch à instância de controlo Ryu.*
+
+---
+
+### 27. Executar Aplicação Simples no Ryu e Testar Conectividade
+
+Inicie a aplicação de switch de aprendizagem do Ryu (`simple_switch`) e teste a comutação de pacotes através do nó `h1`:
+
+**Terminal 1 (Ryu):**
+```bash
+ryu run ryu.app.simple_switch
+```
+
+**Terminal 2 (Mininet):**
+```bash
+mininet> h1 ping h2
+```
+
+
+<img width="1639" height="596" alt="27 comando excutar controlador ryu remoto e mn" src="https://github.com/user-attachments/assets/14bd083c-bcb2-4275-ae18-07cd21644aca" />
+*O controlador processa os eventos `packet in` à medida que quadros Ethernet trafegam na rede, aprendendo as portas e realizando o encaminhamento dos pacotes ICMP com sucesso.
+
+
+
+
 
