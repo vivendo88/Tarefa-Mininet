@@ -160,3 +160,156 @@ mininet> exit
 ![Saindo da execução do Mininet](10%20Saindo%20da%20execu%C3%A7%C3%A3o%20do%20mininet.jpg)
 
 > **Comportamento esperado no Wireshark:** Quando o Mininet encerra, a interface virtual de rede (`s1-eth1`) é removida da pilha de rede do Linux. O Wireshark exibirá a mensagem de aviso informando que o adaptador de rede parou de funcionar e encerrou a captura.
+
+## 11. Teste Dinâmico e Automatizado de Ping (Pingpair)
+
+O Mininet permite subir a topologia, validar a comunicação entre o par de hosts e derrubar o ambiente automaticamente com um único comando:
+
+```bash
+mn --test pingpair
+```
+
+![11 Comando de teste ping dinamico](11%20Comando%20de%20teste%20ping%20dinamico.png)
+
+*O Mininet executa o teste ping entre `h1` e `h2`, relata o percentual de pacotes recebidos (`0% dropped`) e desmonta a rede.*
+
+---
+
+## 12. Teste Automatizado de Largura de Banda com Iperf
+
+Avalie a capacidade de transferência TCP do ambiente padrão de switches emulados:
+
+```bash
+sudo mn --test iperf
+```
+
+![12 comando para gerar trafego na rede](12%20comando%20para%20gerar%20trafego%20na%20rede.png)
+
+*O teste reporta taxas elevadas (acima de 50 Gbits/sec), demonstrando a ausência de gargalos ou limitações de banda simuladas nos links padrão.*
+
+---
+
+## 13. Simulação de Gargalo de Rede e Atraso (Traffic Control - TC)
+
+É possível emular condições de links reais restringindo largura de banda (`bw`) e inserindo latência (`delay`) através do subsistema `tc` do Linux:
+
+```bash
+sudo mn --link tc,bw=10,delay=10ms
+```
+
+Dentro do prompt do Mininet, teste a banda e a latência de ida e volta:
+
+```bash
+mininet> iperf
+mininet> h1 ping -c10 h2
+```
+
+![13 simulando trafego no ambiente e delay](13%20simulando%20trafego%20no%20ambiente%20e%20delay.png)
+
+* **Iperf:** Taxa limitada em aproximadamente **9.50 a 11.8 Mbits/sec** (próximo ao teto configurado de 10 Mbps).
+* **Ping:** Latência média de ida e volta de cerca de **40 ms** (10 ms por trecho de link: $h1 \leftrightarrow s1$ e $s1 \leftrightarrow h2$, totalizando 20 ms de ida e 20 ms de volta).
+
+---
+
+## 14. Depuração e Logs Detalhados de Inicialização
+
+Para auditar cada chamada interna de sistema, comandos de configuração de IP, interfaces virtuais e inicialização de Open vSwitch:
+
+```bash
+mn -v debug
+```
+
+![14 comando para trazer logs de iniciação do codigo](14%20comando%20para%20trazer%20logs%20de%20inicia%C3%A7%C3%A3o%20do%20codigo.png)
+
+*Exibe chamadas como `ip link add`, `ovs-vsctl`, migração de interfaces virtuais para namespaces dos hosts e comunicação do controlador OpenFlow.*
+
+---
+
+## 15. Executando uma Topologia Personalizada em Python
+
+Inicie uma topologia escrita em arquivo Python externo (`--custom`) contendo múltiplos switches e nós:
+
+```bash
+mn --custom ~/mininet/custom/topo-2sw-2host.py --topo mytopo --test pingall
+```
+
+![15 Comando que roda uma topologia personaliza](15%20Comando%20que%20roda%20uma%20topologia%20personaliza.png)
+
+*A topologia `mytopo` conecta `h1` ao switch `s3`, `h2` ao switch `s4`, e interliga `s3` a `s4`. O teste `pingall` confirma que todos os hosts conseguem se comunicar através dos switches intermediários.*
+
+---
+
+## 16. Endereçamento MAC Padrão vs. MAC Determinístico
+
+Por padrão, o Mininet gera endereços MAC pseudo-aleatórios para as interfaces dos hosts:
+
+```bash
+mn
+mininet> h1 ifconfig
+```
+
+![16 comparando mn ifconfig](16%20comparando%20mn%20ifconfig.png)
+*O endereço MAC do `h1-eth0` é gerado aleatoriamente (ex: `6a:92:23:14:d7:e4`).*
+
+---
+
+## 17. Utilizando MACs Fáceis de Identificar (`--mac`)
+
+Ao adicionar o parâmetro `--mac`, o Mininet atribui endereços físicos previsíveis baseados no ID do nó:
+
+```bash
+mn --mac
+mininet> h1 ifconfig
+```
+
+![17 comparando mn --mac ifconfig](17%20comparando%20mn%20--mac%20ifconfig.png)
+*O MAC do host 1 passa a ser fixado como `00:00:00:00:00:01`, facilitando inspeção e filtros em capturas de pacotes no Wireshark.*
+
+---
+
+## 18. Abrindo Janelas de Terminal Individuais para Cada Nó (`-x`)
+
+Para depurar e executar comandos simultaneamente em cada elemento da topologia através de instâncias separadas de terminal XTerm:
+
+```bash
+sudo -E mn -x
+```
+
+![17 rodando o mininet a abrindo as janelas de cada node](17%20rodando%20o%20mininet%20a%20abrindo%20as%20janelas%20de%20cada%20node.png)
+
+*Janelas independentes são iniciadas para o controlador `c0`, o switch `s1`, e os hosts `h1` e `h2`.*
+
+---
+
+## 19. Teste Contínuo de Ping e Inspeção no Wireshark
+
+A partir da janela individual do nó `h1`, inicie um envio contínuo de pings para o IP de `h2`:
+
+```bash
+# Na janela do host h1:
+ping 10.0.0.2
+```
+
+![18 realizando Ping entres os Hosts](18%20realizando%20Ping%20entres%20os%20Hosts.jpg)
+
+*O tráfego de pacotes ICMP em tempo real pode ser inspecionado na interface virtual `s1-eth2` pelo Wireshark.*
+
+---
+
+## 20. Comparação de Desempenho entre Tipos de Switch (User vs. OVS Kernel)
+
+Avalie a diferença de taxa de transferência entre uma implementação de switch no espaço de usuário (*user space*) e no espaço de kernel (*Open vSwitch kernel mode*):
+
+### Switch em User Space:
+```bash
+sudo mn --switch user --test iperf
+```
+*Resultados na ordem de **~1.18 Gbits/sec** devido ao overhead de trocas de contexto entre o kernel e o processo de usuário.*
+
+### Switch Open vSwitch em Kernel Mode:
+```bash
+sudo mn --switch ovsk --test iperf
+```
+*Resultados na ordem de **~60.1 Gbits/sec**, aproveitando o chaveamento nativo e aceleração dentro do kernel Linux.*
+
+![19 Comparando test de iperf](19%20Comparando%20test%20de%20iperf.png)
