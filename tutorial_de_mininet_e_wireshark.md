@@ -11,6 +11,7 @@ Abra o terminal com permissão para iniciar ferramentas de captura gráfica e ex
 ```bash
 sudo -E wireshark &
 ```
+<img width="903" height="655" alt="1 Iniciando wireshark" src="https://github.com/user-attachments/assets/32844f5d-1c1b-4d56-b854-6d39fe247ae9" />
 
 > **Nota:** O parâmetro `-E` preserva o ambiente do utilizador (incluindo variáveis `$DISPLAY` do servidor X), e o `&` libera o prompt do terminal para continuar comandos.
 
@@ -26,6 +27,9 @@ Em uma janela de terminal como root, crie a topologia mínima composta por dois 
 mn
 ```
 
+<img width="798" height="578" alt="2 Iniciando_mininet" src="https://github.com/user-attachments/assets/9fa296ea-719c-4acf-b52c-9bef9d722bd4" />
+
+
 ![Iniciando Mininet](2%20Iniciando_mininet.png)
 
 ---
@@ -38,6 +42,9 @@ No prompt interativo do Mininet (`mininet>`), verifique todos os elementos da to
 mininet> nodes
 ```
 
+<img width="798" height="578" alt="3 Exibindo os Nodes criados" src="https://github.com/user-attachments/assets/1d3bc798-615e-427c-a511-9dc4f2d4f86b" />
+
+
 ![Exibindo os Nodes criados](3%20Exibindo%20os%20Nodes%20criados.png)
 
 *Saída esperada:*
@@ -45,6 +52,7 @@ mininet> nodes
 available nodes are:
 c0 h1 h2 s1
 ```
+
 
 ---
 
@@ -55,6 +63,8 @@ Visualize as interfaces de cada elemento e seus respectivos pontos de interconex
 ```bash
 mininet> net
 ```
+<img width="798" height="302" alt="4 Exibindo os como esta configuranção da rede" src="https://github.com/user-attachments/assets/897f6472-db82-4c5c-a6d3-2c86d33774b0" />
+
 
 ![Exibindo a configuração da rede](4%20Exibindo%20os%20como%20esta%20configuran%C3%A7%C3%A3o%20da%20rede.png)
 
@@ -75,6 +85,9 @@ Retorne à janela do Wireshark iniciada no Passo 1. As interfaces virtuais criad
 
 ---
 
+<img width="960" height="757" alt="5 wireshark após iniciar mininet" src="https://github.com/user-attachments/assets/1dcbe4ad-628f-4ac7-82d3-c7144f448cbc" />
+
+
 ## 6. Exibir as Configurações de Rede do Host 1
 
 Consulte as propriedades de rede atribuídas ao nó `h1` (endereço IPv4, MAC e status operacional):
@@ -82,7 +95,7 @@ Consulte as propriedades de rede atribuídas ao nó `h1` (endereço IPv4, MAC e 
 ```bash
 mininet> h1 ifconfig -a
 ```
-
+<img width="598" height="260" alt="6 exibindo configuração do host1" src="https://github.com/user-attachments/assets/b03d5c65-cea4-43d5-86f1-6e18c4a93850" />
 ![Exibindo configuração do host1](6%20exibindo%20configura%C3%A7%C3%A3o%20do%20host1.png)
 
 ---
@@ -95,6 +108,7 @@ Inspecione a tabela de processos em execução dentro do ambiente do nó:
 mininet> h1 ps -a
 ```
 
+<img width="598" height="228" alt="7 exibindo processos rodando no host1" src="https://github.com/user-attachments/assets/920c186a-a17a-421a-ab55-3262017f5317" />
 ![Exibindo processos rodando no host1](7%20exibindo%20processos%20rodando%20no%20host1.png)
 
 ---
@@ -107,11 +121,13 @@ Execute um teste de ping pontual partindo de `h1` em direção a `h2`:
 mininet> h1 ping -c 1 h2
 ```
 
+<img width="1554" height="517" alt="8 Ping do host 1 para host2" src="https://github.com/user-attachments/assets/3654c655-15d0-4bbb-80d1-a9597eebf45e" />
 ![Ping do host 1 para host2](8%20Ping%20do%20host%201%20para%20host2.png)
 
 ### O que observar no Wireshark:
 1. **Requisição e resposta ARP:** Resolução de endereço físico `MAC` para o IP `10.0.0.2`.
 2. **Pacotes ICMP:** Envio de requisição (*Echo Request*) e recebimento da resposta (*Echo Reply*).
+
 
 ---
 
@@ -123,7 +139,7 @@ Inicie um servidor web simples com Python no `h1` escutando na porta 80 e execut
 mininet> h1 python -m http.server 80 &
 mininet> h2 wget -O - h1
 ```
-
+<img width="1916" height="897" alt="9 iniciando serviço http no host1 e acessando do host2" src="https://github.com/user-attachments/assets/7d9d0e4a-1c03-4112-a7f1-75da8387fd95" />
 ![Iniciando serviço HTTP no host1 e acessando do host2](9%20iniciando%20servi%C3%A7o%20http%20no%20host1%20e%20acessando%20do%20host2.jpg)
 
 ### O que observar no Wireshark:
@@ -140,7 +156,7 @@ Para derrubar a topologia virtual e liberar os recursos do sistema:
 ```bash
 mininet> exit
 ```
-
+<img width="1916" height="897" alt="10 Saindo da execução do mininet" src="https://github.com/user-attachments/assets/84d791bf-5dc7-4d61-8893-c70bd90adca8" />
 ![Saindo da execução do Mininet](10%20Saindo%20da%20execu%C3%A7%C3%A3o%20do%20mininet.jpg)
 
 > **Comportamento esperado no Wireshark:** Quando o Mininet encerra, a interface virtual de rede (`s1-eth1`) é removida da pilha de rede do Linux. O Wireshark exibirá a mensagem de aviso informando que o adaptador de rede parou de funcionar e encerrou a captura.
