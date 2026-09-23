@@ -458,7 +458,7 @@ sudo python3 tarefa.py
 
 ---
 
-## Laboratorio RYU 
+## Laboratorio Ryu + OpenFlow
 ## 01 : Atualização do Ambiente da Máquina Virtual
 
 Atualização dos repositórios e pacotes do sistema operacional base (Ubuntu Focal):
@@ -475,7 +475,106 @@ python3 -m pip install --upgrade pip
 
 <img width="816" height="571" alt="29 Comando para atualizar VM" src="https://github.com/user-attachments/assets/7c5af9a1-2968-4848-bc35-73079238225b" />
 
+<img width="808" height="231" alt="30 Comando para atualizar python da  VM" src="https://github.com/user-attachments/assets/fc6bef09-e2e2-4333-91d0-0bff5cb8def9" />
+
+
 ---
+## 2: Instalação e Configuração do Controlador Ryu
+
+Clone do repositório oficial do controlador Ryu e instalação das dependências:
+
+```bash
+cd ~
+git clone https://github.com/osrg/ryu.git
+cd ~/ryu
+pip install .
+```
+<img width="804" height="176" alt="31 Comando baixar os arquivod do controlador na  VM" src="https://github.com/user-attachments/assets/c4edebea-2757-48aa-97d1-d03cdb1c37db" />
+
+<img width="803" height="160" alt="32 Comando para intalar ryu VM" src="https://github.com/user-attachments/assets/1aeeacdb-29be-45f1-a6b6-fe78683b6b49" />
+
+O Ryu provê suporte nativo aos protocolos OpenFlow 1.0 a 1.5 e utilitários integrados de chaveamento e roteamento.
+
+## 3: Inicialização da Topologia SDN com Controlador Remoto
+
+Iniciação de uma rede simples no Mininet com 1 switch, 3 hosts e suporte a OpenFlow 1.3 apontando para um controlador externo:
+
+```bash
+sudo mn --topo single,3 --mac --controller remote --switch ovsk,protocols=OpenFlow13
+```
+
+
+### Parâmetros utilizados:
+* `--topo single,3`: 1 switch (`s1`) conectado a 3 hosts (`h1`, `h2`, `h3`).
+* `--mac`: Atribui endereços MAC legíveis e sequenciais.
+* `--controller remote`: Indica que as decisões de fluxo serão providas por um processo externo ex: Ryu.
+* `--switch ovsk,protocols=OpenFlow13`: Força o Open vSwitch a operar com a versão 1.3 do protocolo.
+
+---
+
+<img width="802" height="401" alt="33 Comando para cria rede simulada na VM" src="https://github.com/user-attachments/assets/5433ce4a-bd7b-4daf-b58d-a190a056a567" />
+
+## 4: Diagnóstico de Conectividade e Análise de Tráfego
+
+Ao executar o comando de teste de ping no CLI do Mininet antes do controlador ter as regras ativas instaladas:
+
+```text
+mininet> h1 ping h2
+```
+
+### Comportamento Observado:
+* Respostas do tipo `Destination Host Unreachable`.
+* **Causa técnica:** Na ausência de regras proativas ou de uma aplicação de aprendizado no controlador (*L2 learning switch*), o switch não sabe para qual porta encaminhar requisições ARP Broadcast 
+* Wireshark na interface `s1-eth1`, observam-se sucessivos pacotes `ARP Request` sem resposta.
+
+---
+
+<img width="1585" height="583" alt="34 Comando para teste de conectivdade" src="https://github.com/user-attachments/assets/def97f6c-2883-4136-a55e-71f9e5ac0cb5" />
+
+## 5: Análise do Handshake OpenFlow no Wireshark
+
+Após iniciar o controlardor RYU observa-se um mudança nos pacotes capturados no wireshark
+
+```bash
+ ryu-manager --verbose ryu.app.simple_switch_13
+```
+
+
+Filtrando o canal de controle no Wireshark com o filtro:
+```text
+openflow_v4
+```
+
+| Frame / Sequência | Tipo de Mensagem | Descrição |
+| :--- | :--- | :--- |
+| `OFPT_HELLO` | Negociação de Versão | O switch e o controlador trocam versões suportadas e estabelecem o OpenFlow 1.3. |
+| `OFPT_FEATURES_REQUEST` | Requisição | O controlador consulta as características físicas e lógicas do switch. |
+| `OFPT_FEATURES_REPLY` | Resposta | O switch retorna Datapath ID, contadores e tabelas disponíveis. |
+| `OFPT_MULTIPART_REQUEST/REPLY` | Port Description (`OFPMP_PORT_DESC`) | Descoberta de nomes e estados das portas (`s1-eth1`, `s1-eth2`, etc.). |
+| `OFPT_FLOW_MOD` | Modificação de Fluxo | Instalação da regra inicial (ex: *table-miss* direcionando pacotes não casados ao controlador). |
+| `OFPT_ECHO_REQUEST/REPLY` | Manutenção (Keepalive) | Mensagens periódicas a cada 5s para verificar a integridade da sessão TCP. |
+
+---
+
+<img width="1900" height="402" alt="35 pacotes trocados wireshark" src="https://github.com/user-attachments/assets/b73e782c-d25b-4b3b-94d0-07a94c204a07" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
