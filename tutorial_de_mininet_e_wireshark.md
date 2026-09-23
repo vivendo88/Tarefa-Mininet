@@ -439,6 +439,50 @@ mininet> h1 ping h2
 <img width="1639" height="596" alt="27 comando excutar controlador ryu remoto e mn" src="https://github.com/user-attachments/assets/14bd083c-bcb2-4275-ae18-07cd21644aca" />
 *O controlador processa os eventos `packet in` à medida que quadros Ethernet trafegam na rede, aprendendo as portas e realizando o encaminhamento dos pacotes ICMP com sucesso.
 
+## 28: Execução e Teste de Topologia Customizada
+
+Execução de script Python customizado contendo mapeamento de portas entre hosts e switches, verificação de conectividade com `pingall` e medição de vazão TCP com `iperf`.
+
+```bash
+cd ~/mininet/examples
+sudo python3 tarefa.py
+```
+
+<img width="846" height="801" alt="28 excutando o arquivo" src="https://github.com/user-attachments/assets/cbf50523-ddbf-4500-8008-bede43ff2fad" />
+
+
+### Saída Obtida:
+* **Mapeamento de interfaces:** Ligações entre hosts (`h1` a `h12`) e switches (`s2`, `s3`, `s4`).
+* **Ping reachability:** $132/132$ pacotes recebidos ($0\%$ de perda).
+* **Teste de banda (iperf):** Vazão aferida entre $9.55\text{ Mbits/s}$ e $11.9\text{ Mbits/s}$ para enlaces com limitação configurada.
+
+---
+
+## Laboratorio RYU 
+## 01 : Atualização do Ambiente da Máquina Virtual
+
+Atualização dos repositórios e pacotes do sistema operacional base (Ubuntu Focal):
+
+```bash
+sudo apt update && sudo apt dist-upgrade -y
+```
+
+Atualização do gerenciador de pacotes Python (`pip`):
+
+```bash
+python3 -m pip install --upgrade pip
+```
+
+<img width="816" height="571" alt="29 Comando para atualizar VM" src="https://github.com/user-attachments/assets/7c5af9a1-2968-4848-bc35-73079238225b" />
+
+---
+
+
+
+
+
+
+
 
 
 
