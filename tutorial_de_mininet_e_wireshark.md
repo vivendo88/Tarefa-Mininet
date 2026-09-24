@@ -419,6 +419,9 @@ sudo mn --controller ryu
 
 *A infraestrutura é carregada associando o switch à instância de controlo Ryu.*
 
+<img width="824" height="622" alt="34 1 Comando para teste de conectivdade" src="https://github.com/user-attachments/assets/86a203ce-5e25-4a3d-973a-b0882cadbabc" />
+*Ao tentar realizar teste de conectividade antes e iniciar o controlador  o switch não sabe para qual porta encaminhar requisições ARP Broadcast*
+
 ---
 
 ### 27. Executar Aplicação Simples no Ryu e Testar Conectividade
