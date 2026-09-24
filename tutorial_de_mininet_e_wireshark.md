@@ -567,16 +567,21 @@ openflow_v4
 ### 6: Funcionamento do  do learning switch
 O switch OpenFlow inicia uma conexão com o controlador e estabelece a comunicação via mensagens de handshake com as mensagens OFPT_HELLO, OFPT_FEATURES_REQUEST, OFPT_FEATURES_REPLY, OFPT_SET_CONFIG, OFPT_MULTIPART_REQUEST,OFPT_MULTIPART_REPLY
 Quando um pacote chega ao switch sem uma regra de fluxo correspondente, ele gera e envia um evento assíncrono `OFPT_PACKET_IN` ao controlador.
+
 O controlador RYU intercepta essa mensagem por meio da função decorada com `@set_ev_cls(ofp_event.EventOFPPacketIn)`.
 A biblioteca de pacotes decodifica os cabeçalhos Ethernet para extrair o endereço MAC de origem (`src`) e de destino (`dst`), além da porta de entrada (`in_port`).
+
 O controlador realiza o aprendizado do host mapeando a porta de entrada com o endereço de origem recebido.
 Em seguida, a aplicação avalia a porta associada ao endereço MAC de destino para determinar o encaminhamento.
 Se o destino não for conhecido, o controlador define a ação como `OFPP_FLOOD` para encaminhar o pacote para todas as portas.
-Para enviar o pacote imediatamente pela rede após a decisão, o controlador gera uma mensagem `OFPPacketOut` e a envia ao switch.
+Para enviar o pacote imediatamente pela rede após a decisão, o controlador gera uma mensagem `OFPPacketOut` contendo a ação OFPP_FLOOD e a envia aos switch.
 Apenas o computador que era o verdadeiro destinatário do pacote vai reconhecer que o pacote era para ele.
+
 Quando a resposta do OFPPacketOut chega no switch OpenFlow, o switch olha suas tabelas de fluxo como é uma comunicação nova o switch empacota esse novo pacote e envia para o controlador na forma de uma mensagem (Packt-in)
+
 O controlador recebe o Packet-In, descobre finalmente em qual porta o host destino está conectado.
 Paralelamente, o controlador monta uma regra com `OFPMatch` e as devidas instruções e ações para os próximos pacotes.
+
 Por fim, o controlador envia uma mensagem `OFPFlowMod` para instalar o novo fluxo na tabela do switch, tratando requisições futuras de forma reativa.
 
 
