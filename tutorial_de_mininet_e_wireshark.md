@@ -617,6 +617,44 @@ Acrescentado o fluxo de H1 > H3
 
  
 
+# RYU Controller Tutorial
+
+## Passo 1: Inicializando a Topologia no Mininet
+Aberto  uma janela de terminal e executado o comando para iniciar a simulação com **1 switch (`s1`) conectado a um controlador remoto e 3 hosts (`h1`, `h2`, `h3`)**:
+
+
+```bash
+sudo mn --topo single,3 --mac --controller remote --switch ovsk
+```
+
+<img width="1273" height="612" alt="39  teste tutorial RYU" src="https://github.com/user-attachments/assets/0cfd577d-d21f-4d0b-807d-8357a050c92d" />
+
+### Passo 2: Configurando o Protocolo OpenFlow 1.3 no Switch
+Em outro terminal, executado comando para configurar o switch `s1` para operar estritamente com o protocolo **OpenFlow 1.3**:
+
+```bash
+sudo ovs-vsctl set bridge s1 protocols=OpenFlow13
+```
+<img width="1915" height="999" alt="40  teste tutorial RYU" src="https://github.com/user-attachments/assets/cf91e3a4-24d6-453e-bf7a-309d1defbd33" />
+
+### Passo 3: Iniciando o Controlador RYU
+Navgado ate o diretorio onde  RYU está instalado  e iniciado o gerenciador, carregando a aplicação padrão de switch simples em OpenFlow 1.3 (`simple_switch_13.py`):
+
+```bash
+cd ryu && ./bin/ryu-manager --verbose ryu/app/simple_switch_13.py
+```
+
+<img width="1828" height="758" alt="41  teste tutorial RYU" src="https://github.com/user-attachments/assets/5537dfb0-ba86-4567-baf7-a4a857aa546d" />
+
+### Passo 4: Monitorando com o Wireshark e Testando a Conectividade
+Iniciado o Wireshark em segundo plano (`sudo wireshark &`) para monitorar a interface de rede. Em seguida, no Mininet realizado teste a conectividade executando um comando de `ping` entre os hosts:
+
+```text
+mininet> h1 ping h3
+```
+
+<img width="1629" height="749" alt="42  teste tutorial RYU" src="https://github.com/user-attachments/assets/0f08e2f4-6639-471d-a9a4-ad21d136121a" />
+
 
 
 
@@ -633,7 +671,7 @@ O controlador realiza o aprendizado do host mapeando a porta de entrada com o en
 Em seguida, a aplicação avalia a porta associada ao endereço MAC de destino para determinar o encaminhamento.
 Se o destino não for conhecido, o controlador define a ação como `OFPP_FLOOD` para encaminhar o pacote para todas as portas.
 Para enviar o pacote imediatamente pela rede após a decisão, o controlador gera uma mensagem `OFPPacketOut` contendo a ação OFPP_FLOOD e a envia aos switch.
-Apenas o computador que era o verdadeiro destinatário do pacote vai reconhecer que o pacote era para ele.
+Apenas o computador que era o verdadeiro destinatário do pacote vai reconhecer que o pacote era para ele e vai responder.
 
 Quando a resposta do OFPPacketOut chega no switch OpenFlow, o switch olha suas tabelas de fluxo como é uma comunicação nova o switch empacota esse novo pacote e envia para o controlador na forma de uma mensagem (Packt-in)
 
