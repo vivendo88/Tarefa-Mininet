@@ -563,12 +563,57 @@ openflow_v4
 <img width="1900" height="402" alt="35 pacotes trocados wireshark" src="https://github.com/user-attachments/assets/b73e782c-d25b-4b3b-94d0-07a94c204a07" />
 
 
+## 6: Análise dos pacotes após testes de conectividade
+
+Durante a execução da topologia no Mininet, realizamos testes de ping entre os hosts
+
+<img width="1857" height="638" alt="37 teste de conectevidade" src="https://github.com/user-attachments/assets/500a96eb-e126-4ece-b7a4-6c7f41c69744" />
+
+
+## . Sequência de Mensagens OpenFlow Capturadas
+
+Analisando a janela do Wireshark na imagem, podemos observar uma sequência clássica de transações OpenFlow 1.3 (`Version: 1.3 (0x04)`) :
+
+### A. `OFPT_PACKET_IN` (Pacotes nº 14219 e 14226)
+* **O que é:** Quando um host envia o primeiro pacote (como uma requisição ARP ou ICMP) e o switch não encontra nenhuma regra correspondente.
+* **Ação do Switch:** O switch encapsula o pacote recebido do host e o envia para o controlador dentro de uma mensagem OFPT_PACKET_IN. 
+
+
+### B. `OFPT_PACKET_OUT` (Pacote nº 14220 e 14233)
+* **O que é:** Após receber o PACKET_IN, o controlador processa a lógica de roteamento/comutação e decide como proceder.
+* **Ação do Controlador:** O controlador envia de volta uma mensagem OFPT_PACKET_OUT instruindo o switch a realizar o encaminhamento do pacote utilizando a ação de **`OFPP_FLOOD`** para descobrir onde o host de destino está conectado, caso o não conheça o endereço MAC.
+
+### C. `OFPT_FLOW_MOD` (Pacote nº 14231 e 14242)
+* **O que é:** Para evitar que futuros pacotes da mesma conversação precisem passar pelo controlador (o que geraria atrasos e sobrecarga), o controlador envia uma mensagem do tipo OFPT_FLOW_MOD.
+* **Ação:** Essa mensagem instala dinamicamente uma **regra de fluxo** diretamente no  switch OpenFlow. A partir desse momento, os pacotes subsequentes daquele fluxo são comutados em velocidade de linha pelo próprio switch.
+
+### D. Mensagens de Manutenção (`OFPT_ECHO_REQUEST` / `OFPT_ECHO_REPLY`)
+* **O que são:** Mensagens periódicas  trocadas entre o switch e o controlador para verificar se a conexão TCP e o canal OpenFlow continuam ativos e funcionais.
+
+### 7: Tabela de Fluxo switch 
+
+Detalhamento das regras instaladas no switch S1
+
+ <img width="1745" height="111" alt="38 Tabela fluxo" src="https://github.com/user-attachments/assets/4af19aef-6418-4a53-a92f-c20d39af289a" />
+
+ ### 8: Análise dos pacotes após testes de conectividade 2 H1 ping H3
+
+ Devido o swtich S1 não conter um tabela de fluxo de h1 para h3 e também o controlador não saber quem é o host atribuído ao MAC de H3 tem que se repetir o ciclo de mensagens anteriores 
+ 
+ <img width="1732" height="609" alt="37 1 teste de conectevidade" src="https://github.com/user-attachments/assets/cbd7a2dd-fe8b-4b17-ac68-bee74b8d2d03" />
 
 
 
 
 
-### 6: Funcionamento do  do learning switch
+ 
+
+
+
+
+
+
+### 9: Funcionamento do  do learning switch
 O switch OpenFlow inicia uma conexão com o controlador e estabelece a comunicação via mensagens de handshake com as mensagens OFPT_HELLO, OFPT_FEATURES_REQUEST, OFPT_FEATURES_REPLY, OFPT_SET_CONFIG, OFPT_MULTIPART_REQUEST,OFPT_MULTIPART_REPLY
 Quando um pacote chega ao switch sem uma regra de fluxo correspondente, ele gera e envia um evento assíncrono `OFPT_PACKET_IN` ao controlador.
 
