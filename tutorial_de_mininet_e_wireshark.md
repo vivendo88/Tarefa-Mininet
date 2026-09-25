@@ -603,6 +603,15 @@ Detalhamento das regras instaladas no switch S1
  <img width="1732" height="609" alt="37 1 teste de conectevidade" src="https://github.com/user-attachments/assets/cbd7a2dd-fe8b-4b17-ac68-bee74b8d2d03" />
 
 
+ ## Tabela de fluxo após segundo teste de conectividade
+
+Acrescentado o fluxo de H1 > H3 
+ <img width="1783" height="179" alt="38 2 Tabela fluxo" src="https://github.com/user-attachments/assets/6f366bde-b896-437d-b424-8424a9a504e9" />
+
+ 
+
+
+
 
 
 
