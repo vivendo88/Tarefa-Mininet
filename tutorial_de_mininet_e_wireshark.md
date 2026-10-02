@@ -350,10 +350,8 @@ Dentro da CLI do Mininet, realize testes de conectividade:
 mininet> h1 ping h2
 ```
 
-<img width="493" height="359" alt="21 comando como namespace" src="https://github.com/user-attachments/assets/a92c1041-0edb-4520-a3d9-9925acbf7ac1" />
+<img width="493" height="359" alt="21 comando como namespace" src="https://github.com/user-attachments/assets/22230a2a-4e5c-42fa-ac14-d6fb08bb9e3b" />
 
-
-![Comando como namespace](21%20comando%20como%20namespace.png)
 
 *O Mininet testa e valida previamente o canal de controle entre `s1` e `c0` com 0% de perda (`2/2 received`) antes de abrir a linha de comando.*
 
