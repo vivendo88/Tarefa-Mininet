@@ -3,7 +3,6 @@
 
 Este repositório contém um roteiro prático demonstrando o provisionamento de topologia de rede emulada utilizando **Mininet**, inspeção de interfaces virtuais, testes de conectividade e captura de pacotes em tempo real com **Wireshark**.
 
----
 
 ## 1. Inicializar o Wireshark em Segundo Plano
 
@@ -19,7 +18,7 @@ sudo -E wireshark &
 
 
 
----
+
 
 ## 2. Iniciar a Topologia Padrão no Mininet
 
@@ -35,7 +34,7 @@ mn
 
 
 
----
+
 
 ## 3. Listar os Nós Criados (Nodes)
 
@@ -55,7 +54,7 @@ c0 h1 h2 s1
 ```
 
 
----
+
 
 ## 4. Inspecionar a Topologia e Conexões de Rede (Links)
 
@@ -73,7 +72,7 @@ mininet> net
 * `h2`: interface `h2-eth0` conectada em `s1-eth2`
 * `s1`: portas `s1-eth1` e `s1-eth2` ligadas a `h1` e `h2`, respectivamente
 
----
+
 
 ## 5. Selecionar a Interface para Captura no Wireshark
 
@@ -84,7 +83,7 @@ Retorne à janela do Wireshark iniciada no Passo 1. As interfaces virtuais criad
 
 * Dê duplo clique sobre a interface **`s1-eth1`** para iniciar a captura do tráfego que entra e sai do host 1.
 
----
+
 
 <img width="960" height="757" alt="5 wireshark após iniciar mininet" src="https://github.com/user-attachments/assets/1dcbe4ad-628f-4ac7-82d3-c7144f448cbc" />
 
@@ -98,7 +97,7 @@ mininet> h1 ifconfig -a
 ```
 <img width="598" height="260" alt="6 exibindo configuração do host1" src="https://github.com/user-attachments/assets/b03d5c65-cea4-43d5-86f1-6e18c4a93850" />
 
----
+
 
 ## 7. Listar Processos em Execução no Namespace do Host 1
 
@@ -111,7 +110,7 @@ mininet> h1 ps -a
 <img width="598" height="228" alt="7 exibindo processos rodando no host1" src="https://github.com/user-attachments/assets/920c186a-a17a-421a-ab55-3262017f5317" />
 
 
----
+
 
 ## 8. Teste de Conectividade com Ping (ICMP e ARP)
 
@@ -129,7 +128,7 @@ mininet> h1 ping -c 1 h2
 2. **Pacotes ICMP:** Envio de requisição (*Echo Request*) e recebimento da resposta (*Echo Reply*).
 
 
----
+
 
 ## 9. Subir Servidor HTTP no Host 1 e Acessar via Host 2
 
