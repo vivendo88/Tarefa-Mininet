@@ -1,3 +1,8 @@
+# Link do github
+## https://github.com/vivendo88/Tarefa-Mininet.git
+
+
+
 # Tutorial: Emulação de Redes com Mininet e Análise de Tráfego com Wireshark
 
 Este repositório contém um roteiro prático demonstrando o provisionamento de topologia de rede emulada utilizando **Mininet**, inspeção de interfaces virtuais, testes de conectividade e captura de pacotes em tempo real com **Wireshark**.
@@ -660,30 +665,97 @@ mininet> h1 ping h3
 
 
 
-### 9: Funcionamento do  do learning switch
-O switch OpenFlow inicia uma conexão com o controlador e estabelece a comunicação via mensagens de handshake com as mensagens OFPT_HELLO, OFPT_FEATURES_REQUEST, OFPT_FEATURES_REPLY, OFPT_SET_CONFIG, OFPT_MULTIPART_REQUEST,OFPT_MULTIPART_REPLY
-Quando um pacote chega ao switch sem uma regra de fluxo correspondente, ele gera e envia um evento assíncrono `OFPT_PACKET_IN` ao controlador.
+##  9 **Funcionamento do Learning Switch e Troca de Mensagens OpenFlow**
 
-O controlador RYU intercepta essa mensagem por meio da função decorada com `@set_ev_cls(ofp_event.EventOFPPacketIn)`.
-A biblioteca de pacotes decodifica os cabeçalhos Ethernet para extrair o endereço MAC de origem (`src`) e de destino (`dst`), além da porta de entrada (`in_port`).
-
-O controlador realiza o aprendizado do host mapeando a porta de entrada com o endereço de origem recebido.
-Em seguida, a aplicação avalia a porta associada ao endereço MAC de destino para determinar o encaminhamento.
-Se o destino não for conhecido, o controlador define a ação como `OFPP_FLOOD` para encaminhar o pacote para todas as portas.
-Para enviar o pacote imediatamente pela rede após a decisão, o controlador gera uma mensagem `OFPPacketOut` contendo a ação OFPP_FLOOD e a envia aos switch.
-Apenas o computador que era o verdadeiro destinatário do pacote vai reconhecer que o pacote era para ele e vai responder.
-
-Quando a resposta do OFPPacketOut chega no switch OpenFlow, o switch olha suas tabelas de fluxo como é uma comunicação nova o switch empacota esse novo pacote e envia para o controlador na forma de uma mensagem (Packt-in)
-
-O controlador recebe o Packet-In, descobre finalmente em qual porta o host destino está conectado.
-Paralelamente, o controlador monta uma regra com `OFPMatch` e as devidas instruções e ações para os próximos pacotes.
-
-Por fim, o controlador envia uma mensagem `OFPFlowMod` para instalar o novo fluxo na tabela do switch, tratando requisições futuras de forma reativa.
+1. **Estabelecimento de Conexão e Handshake Inicial**
+* O switch inicia uma conexão padrão TCP (ou TLS) com o controlador.
 
 
+* Após o canal ser aberto, ambas as entidades trocam mensagens `OFPT_HELLO` para negociar a versão do protocolo OpenFlow mais alta suportada.
 
-### Link do github
-### https://github.com/vivendo88/Tarefa-Mininet.git
+
+* Em seguida, o controlador envia uma mensagem `OFPT_FEATURES_REQUEST` (que contém apenas o cabeçalho OpenFlow e nenhum corpo).
+
+
+* O switch responde com um `OFPT_FEATURES_REPLY`, informando seu Datapath ID e as capacidades suportadas pelo dispositivo.
+
+
+* O controlador transmite a mensagem `OFPT_SET_CONFIG` ao switch para definir configurações operacionais (como *flags* e o tamanho máximo de bytes dos pacotes a serem encaminhados ao controlador).
+
+
+* Para consultar descrições ou estatísticas (por exemplo, a descrição das portas no aplicativo `simple_switch_13.py`), o controlador envia uma mensagem `OFPT_MULTIPART_REQUEST` (do tipo `OFPMP_PORT_DESC`), recebendo em seguida a resposta `OFPT_MULTIPART_REPLY` com a descrição de todas as portas ativas.
+
+
+<img width="1900" height="402" alt="35 pacotes trocados wireshark" src="https://github.com/user-attachments/assets/8843595b-5d55-41f3-841d-9d99bc4b7ab7" />
+
+
+
+
+2. **Recepção de Pacotes Desconhecidos e Evento Assíncrono (`Packet-In`)**
+* Quando um pacote chega ao switch e não encontra um fluxo correspondente (ou precisa ser tratado de forma reativa), ele é encaminhado ao controlador como um evento assíncrono.
+
+
+* No controlador RYU, essa mensagem assíncrona é capturada por uma função decorada com `@set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)`.
+
+
+
+
+3. **Decodificação de Cabeçalhos e Aprendizado de Endereços**
+* Utilizando a biblioteca de pacotes do RYU (`ryu.lib.packet`), os cabeçalhos Ethernet são decodificados a partir dos dados brutos recebidos na mensagem (`msg.data`).
+
+
+* São extraídos os parâmetros de rede, tais como o endereço MAC de origem (`src`), o endereço MAC de destino (`dst`) e a porta de entrada do pacote (`in_port` / `msg.match['in_port']`).
+
+  <img width="1514" height="1006" alt="44-extraçãodemac" src="https://github.com/user-attachments/assets/651f0ce3-0e2a-4d44-93a2-d68a3b730be6" />
+
+
+
+* Com esses dados, o controlador aprende a localização do host de origem associando a porta de entrada ao seu endereço MAC.
+
+
+4. **Tratamento de Encaminhamento e Envio via `Packet-Out**`
+* Caso a porta referente ao host de destino (`dst`) ainda seja desconhecida pelo controlador, é definida a ação de broadcast/inundação utilizando `OFPP_FLOOD`.
+
+  <img width="1889" height="1007" alt="45-enviaofpp_flood" src="https://github.com/user-attachments/assets/30a2d101-f134-4934-b5d4-79f91486b7ab" />
+
+
+
+* Para encaminhar o pacote imediatamente pela rede, o controlador constrói uma mensagem `OFPPacketOut` informando a identificação do switch (`datapath`), a porta de entrada e a lista de ações (ex.: `OFPActionOutput(ofp.OFPP_FLOOD)`), enviando-a diretamente ao switch através de `send_msg()`.
+
+<img width="1857" height="638" alt="37 teste de conectevidade" src="https://github.com/user-attachments/assets/be94dd35-dddc-49ee-aa1a-4b166463f471" />
+
+
+
+5. **Resposta do Host e Instalação Reativa de Regras (`Flow-Mod`)**
+* Quando o computador de destino recebe o pacote e responde, essa nova transmissão chega ao switch OpenFlow.
+* Não havendo regra previamente configurada para essa comunicação de retorno, o pacote gera um novo evento assíncrono de `Packet-In` direcionado ao controlador.
+
+
+* Ao processar esse segundo evento, o controlador identifica o endereço MAC de resposta e a porta onde o host de destino está conectado.
+
+
+* Em paralelo ao envio do tráfego, o controlador pode instalar uma nova regra de forma reativa para fluxos futuros:
+
+
+* Constrói o cabeçalho de correspondência com `OFPMatch` (especificando campos como a porta de entrada `in_port` e o endereço `eth_dst`).
+
+
+* Define a lista de ações correspondente.
+
+
+* Em conformidade com o OpenFlow 1.3, estrutura as instruções com `OFPInstructionActions` e tipo `OFPIT_APPLY_ACTIONS` contendo essas ações.
+
+
+* Instancia e envia a mensagem `OFPFlowMod` (utilizando comandos como `OFPFC_ADD`) para gravar a nova regra na tabela de fluxos do switch.
+
+<img width="1483" height="593" alt="43 escrevefluxonoSW" src="https://github.com/user-attachments/assets/9ac50f39-56d4-4833-96bb-d9b2d2ac338e" />
+
+
+<img width="1105" height="1004" alt="46-gravanoSW" src="https://github.com/user-attachments/assets/d93a1aa8-c3eb-4597-a32e-fab5794386f1" />
+
+
+
+* A partir deste momento, pacotes subsequentes correspondentes a esse fluxo são tratados e encaminhados diretamente pelo hardware do switch, dispensando novos envios ao controlador.
 
 
 
