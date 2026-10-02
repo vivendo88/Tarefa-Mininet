@@ -1,7 +1,3 @@
-# Link do github
-## https://github.com/vivendo88/Tarefa-Mininet.git
-
-
 
 # Tutorial: Emulação de Redes com Mininet e Análise de Tráfego com Wireshark
 
@@ -16,7 +12,8 @@ Abra o terminal com permissão para iniciar ferramentas de captura gráfica e ex
 ```bash
 sudo -E wireshark &
 ```
-<img width="903" height="655" alt="1 Iniciando wireshark" src="https://github.com/user-attachments/assets/32844f5d-1c1b-4d56-b854-6d39fe247ae9" />
+<img width="903" height="655" alt="1Iniciandowireshark" src="https://github.com/user-attachments/assets/34fed19f-531e-4b46-987a-989d15ac059e" />
+
 
 > **Nota:** O parâmetro `-E` preserva o ambiente do utilizador (incluindo variáveis `$DISPLAY` do servidor X), e o `&` libera o prompt do terminal para continuar comandos.
 
@@ -32,7 +29,8 @@ Em uma janela de terminal como root, crie a topologia mínima composta por dois 
 mn
 ```
 
-<img width="798" height="578" alt="2 Iniciando_mininet" src="https://github.com/user-attachments/assets/9fa296ea-719c-4acf-b52c-9bef9d722bd4" />
+
+<img width="798" height="578" alt="2Iniciando_mininet" src="https://github.com/user-attachments/assets/62e16238-00d9-4fcf-b254-c344068d7d63" />
 
 
 
@@ -47,8 +45,7 @@ No prompt interativo do Mininet (`mininet>`), verifique todos os elementos da to
 mininet> nodes
 ```
 
-<img width="798" height="578" alt="3 Exibindo os Nodes criados" src="https://github.com/user-attachments/assets/1d3bc798-615e-427c-a511-9dc4f2d4f86b" />
-
+<img width="798" height="578" alt="3Exibindoos Nodescriados" src="https://github.com/user-attachments/assets/aab37a1e-80a0-4ffb-917a-d8705be131c5" />
 
 
 *Saída esperada:*
@@ -67,7 +64,7 @@ Visualize as interfaces de cada elemento e seus respectivos pontos de interconex
 ```bash
 mininet> net
 ```
-<img width="798" height="302" alt="4 Exibindo os como esta configuranção da rede" src="https://github.com/user-attachments/assets/897f6472-db82-4c5c-a6d3-2c86d33774b0" />
+<img width="798" height="302" alt="4Exibindo os comoestaconfigurançãoda rede" src="https://github.com/user-attachments/assets/54e29ede-4aba-40e2-9899-af0c00c820a8" />
 
 
 
