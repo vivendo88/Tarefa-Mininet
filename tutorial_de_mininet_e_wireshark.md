@@ -79,7 +79,8 @@ mininet> net
 
 Retorne à janela do Wireshark iniciada no Passo 1. As interfaces virtuais criadas pelo Mininet estarão visíveis na lista de interfaces ativas:
 
-![Wireshark após iniciar Mininet](5%20wireshark%20ap%C3%B3s%20iniciar%20mininet.png)
+<img width="960" height="757" alt="5wiresharkapos iniciarmininet" src="https://github.com/user-attachments/assets/7f6c2274-bb46-4b5a-9788-3ac35d122a54" />
+
 
 * Dê duplo clique sobre a interface **`s1-eth1`** para iniciar a captura do tráfego que entra e sai do host 1.
 
@@ -96,7 +97,6 @@ Consulte as propriedades de rede atribuídas ao nó `h1` (endereço IPv4, MAC e 
 mininet> h1 ifconfig -a
 ```
 <img width="598" height="260" alt="6 exibindo configuração do host1" src="https://github.com/user-attachments/assets/b03d5c65-cea4-43d5-86f1-6e18c4a93850" />
-![Exibindo configuração do host1](6%20exibindo%20configura%C3%A7%C3%A3o%20do%20host1.png)
 
 ---
 
