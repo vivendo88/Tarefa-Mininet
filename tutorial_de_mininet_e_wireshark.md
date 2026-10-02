@@ -400,8 +400,6 @@ mininet> h1 ping h2
 ```
 *<img width="1641" height="989" alt="25 comando excutar arquivo pox py" src="https://github.com/user-attachments/assets/e86206eb-2171-4fc1-8211-5f8de8dda22c" />
 
-![Comando executar arquivo pox.py com ping e wireshark](25%20comando%20excutar%20arquivo%20pox.py.png)
-
 *O switch estabelece sessão com o POX, que instala os fluxos de comutação conforme pacotes ARP e ICMP são inspecionados em tempo real pelo Wireshark.*
 
 ---
